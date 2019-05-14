@@ -1,0 +1,305 @@
+<?php	
+	session_start();
+	spl_autoload_register(function ($class) {
+    include $class.'.class.php';
+});
+$seance=Seance::seanceFromForm();
+?>
+
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>Paramètres de séance</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="projet.css">
+		<script>
+			var indice=0;
+		</script>
+
+	</head>
+
+	<body>
+
+		<form method="POST" id="formSeance">
+			<fieldset id="fieldSeance">
+
+				<!--à retirer ultérieurement-->
+					<input type="hidden" id="nbExercices">
+					<label id="verifHidden"></label>
+				<!-- -->
+
+				<label class="form-lbl" for="nbRounds">Nombre de rounds</label>
+				<input class="form-input-num" type="numeric" id="nbRounds" name="nbRounds" onchange="fctTotal()"><br>
+
+				<label class="form-lbl" for="dureeEchaufMin">Durée d'échauffement</label>
+				<input class="form-input-time" type="numeric" id="dureeEchaufMin" name="dureeEchaufMin" value="00" onchange="fctTotal()">
+				:
+				<input class="form-input-time" type="numeric" id="dureeEchaufSec" name="dureeEchaufSec" value="00" onchange="fctTotal()"><br>
+
+				<label class="form-lbl" for="dureeCalmeMin">Durée de retour au calme</label>
+				<input class="form-input-time" type="numeric" id="dureeCalmeMin" name="dureeCalmeMin" value="00" onchange="fctTotal()">
+				:
+				<input class="form-input-time" type="numeric" id="dureeCalmeSec" name="dureeCalmeSec" value="00" onchange="fctTotal()"><br>
+
+			</fieldset>
+			
+			<fieldset id="fieldExercices">
+				<div id="resultat"></div>
+			</fieldset>
+
+			<input class="form-input-btn" type ="button" onclick="ajouteForm()" value ="Ajouter exercice">
+
+			<fieldset>
+				<p>durée totale : <span id="dureeTotaleSeance"></span></p>
+				<p>durée totale : <span id="minutesTotalSeance"></span>:<span id="secondesTotalSeance"></span></p>
+			</fieldset>
+
+			<input class="form-input-btn" type="submit" id="validerSeance" value="Valider la séance">
+
+		</form>
+
+		<div id="resultatAjax"></div>
+
+		<?php
+			if(isset($_POST['validerSeance'])){
+				$seance=Seance::seanceFromForm();
+				alert("toto");
+			}else{
+				alert("titi");
+			}
+		?>
+
+
+		<script>
+			
+			var listeExercices=listeExercices_V2();
+			alert(listeExercices[0]);
+
+			function ajouteForm(){
+				//alert("toto"+indice);
+				indice++;
+				ajouteInputWithLabel("exercice"+indice,indice);
+				
+				res=document.getElementById('nbExercices');
+				res.setAttribute('value',indice);
+				verif=document.getElementById('verifHidden');
+				verif.innerHTML=res.value;
+			}
+
+			function ajouteInputWithLabel(nom,rang){
+				
+				var res=document.getElementById('resultat');
+				
+				var newField=document.createElement('fieldset');
+
+				//---------------creation hidden
+				var newHidden=document.createElement('input');
+				newHidden.setAttribute('type', 'hidden');
+				newHidden.setAttribute('name', 'hidden_'+nom);
+				newHidden.setAttribute('id', 'hidden_'+nom);
+				newHidden.setAttribute('value', rang);
+
+				//---------------creation label exercice
+				var newTextLabelExercice=document.createTextNode('Exercice '+rang+' : ');
+				var newLabelExercice=document.createElement('label');
+				newLabelExercice.setAttribute('for', 'exercice_'+nom);
+				newLabelExercice.setAttribute('class', 'form-lbl');
+				newLabelExercice.appendChild(newTextLabelExercice);
+
+				//---------------creation Select des exercices
+				var newSelectExercice=document.createElement('select');
+				newSelectExercice.setAttribute('id', 'selectExercice_'+nom);
+				newSelectExercice.setAttribute('name', 'selectExercice_'+nom);
+				for(i=0;i<listeExercices.length;i++){
+					var newTextOptionExercice=document.createTextNode(listeExercices[i]);
+					var newOptionExercice=document.createElement('option');
+					newOptionExercice.appendChild(newTextOptionExercice);
+					newSelectExercice.appendChild(newOptionExercice);
+				}
+
+				//---------------creation label durée
+				var newTextLabelDuree=document.createTextNode('durée d\'effort');
+				var newLabelDuree=document.createElement('label');
+				newLabelDuree.setAttribute('for', 'duree_'+nom);
+				newLabelDuree.setAttribute('class', 'form-lbl');
+				newLabelDuree.appendChild(newTextLabelDuree);
+
+				//---------------creation input durée minutes
+				var newInputMin = document.createElement('input');
+				newInputMin.setAttribute('type', 'numeric');
+				newInputMin.setAttribute('name', 'minutes_'+nom);
+				newInputMin.setAttribute('id', 'minutes_'+nom);
+				newInputMin.setAttribute('class', 'form-input-time');
+				newInputMin.setAttribute('value', '00');
+				newInputMin.setAttribute('onchange', 'fctTotal()');
+
+				//---------------creation input durée secondes
+				var newInputSec = document.createElement('input');
+				newInputSec.setAttribute('type', 'numeric');
+				newInputSec.setAttribute('name', 'secondes_'+nom);
+				newInputSec.setAttribute('id', 'secondes_'+nom);
+				newInputSec.setAttribute('class', 'form-input-time');
+				newInputSec.setAttribute('value', '00');
+				newInputSec.setAttribute('onchange', 'fctTotal()');
+
+				//---------------creation label durée récupération
+				var newTextLabelDureeRecup=document.createTextNode('durée de récupération');
+				var newLabelDureeRecup=document.createElement('label');
+				newLabelDureeRecup.setAttribute('for', 'dureeRecup_'+nom);
+				newLabelDureeRecup.setAttribute('class', 'form-lbl');
+				newLabelDureeRecup.appendChild(newTextLabelDureeRecup);
+
+				//---------------creation input durée minutes récupération
+				var newInputRecupMin = document.createElement('input');
+				newInputRecupMin.setAttribute('type', 'numeric');
+				newInputRecupMin.setAttribute('name', 'recupMinutes_'+nom);
+				newInputRecupMin.setAttribute('id', 'recupMinutes_'+nom);
+				newInputRecupMin.setAttribute('class', 'form-input-time');
+				newInputRecupMin.setAttribute('value', '00');
+				newInputRecupMin.setAttribute('onchange', 'fctTotal()');
+
+				//---------------creation input durée secondes récupération
+				var newInputRecupSec = document.createElement('input');
+				newInputRecupSec.setAttribute('type', 'numeric');
+				newInputRecupSec.setAttribute('name', 'recupSecondes_'+nom);
+				newInputRecupSec.setAttribute('id', 'recupSecondes_'+nom);
+				newInputRecupSec.setAttribute('class', 'form-input-time');
+				newInputRecupSec.setAttribute('value', '00');
+				newInputRecupSec.setAttribute('onchange', 'fctTotal()');
+
+
+				//---------------ajout des champs de formulaires
+				newField.appendChild(newHidden);
+
+				newField.appendChild(newLabelExercice);
+				newField.appendChild(newSelectExercice);
+				newField.appendChild(document.createElement('br'));
+
+				newField.appendChild(newLabelDuree);
+				newField.appendChild(newInputMin);
+				newField.appendChild(document.createTextNode(':'));
+				newField.appendChild(newInputSec);
+				newField.appendChild(document.createElement('br'));
+
+				newField.appendChild(newLabelDureeRecup);
+				newField.appendChild(newInputRecupMin);
+				newField.appendChild(document.createTextNode(':'));
+				newField.appendChild(newInputRecupSec);
+
+				res.appendChild(newField);
+			}
+
+			function fctTotal(){
+				var nbRounds=Number(document.getElementById('nbRounds').value);
+				var echauf=Number(document.getElementById('dureeEchaufMin').value)*60+Number(document.getElementById('dureeEchaufSec').value)
+				var calme=Number(document.getElementById('dureeCalmeMin').value)*60+Number(document.getElementById('dureeCalmeSec').value);
+				
+				var formField=document.getElementById('fieldExercices');
+				var somDuree=0;
+				var tablDuree=formField.getElementsByTagName('input');
+				//-------------------pour tous les input du fieldset, on récupère la valeur
+				//-------------------s'il s'agit du champ des minutes, on multiplie par 60
+				for(i=0;i<tablDuree.length;i++){
+					if((tablDuree[i].type=='numeric')||(tablDuree[i].type=='text')){
+						if(tablDuree[i].name.search('minutes')!=-1){
+							somDuree+=Number(tablDuree[i].value)*60;
+						}else{
+							somDuree+=Number(tablDuree[i].value);
+						}
+					}
+				}
+
+				//------------------- calcul de la durée (y compris durées d'échauffement et de retour au calme)
+				var totalSecondesSeance=somDuree*nbRounds+echauf+calme;
+
+				document.getElementById('dureeTotaleSeance').innerHTML=totalSecondesSeance+"s";
+				document.getElementById('minutesTotalSeance').innerHTML=SecondesToMinutesSecondes(totalSecondesSeance)[0];
+				document.getElementById('secondesTotalSeance').innerHTML=SecondesToMinutesSecondes(totalSecondesSeance)[1];
+			}
+
+			function SecondesToMinutesSecondes(totalSecondes){
+				tablDuree=[parseInt(totalSecondes/60),totalSecondes%60];
+				return tablDuree;
+			}
+
+			function asyncRequest(){
+				try{
+					var request=new XMLHttpRequest();
+					alert("etape 1 OK");
+				}catch(e1){
+					try{
+						request=new ActiveXObject("Msxml2.XMLHTTP");
+						alert("etape 2 OK");
+					}catch(e2){
+						try{
+							request=new ActiveXObject("Microsoft.XMLHTTP");
+							alert("etape 3 OK");
+						}catch(e3){
+							request=false;
+							alert("probleme");
+						}
+					}
+				}
+				return request;
+			}
+
+			function listeExercices(){
+				request=new asyncRequest();
+				request.open("POST","scriptAjax.php",false);
+				request.send(null);
+				var tableauExercices=request.responseText.split(';')
+				
+				var chaineExercices="";
+				for(var i=0;i<tableauExercices.length;i++) {
+				 	chaineExercices+=" - " + tableauExercices[i];
+				}
+				document.getElementById("resultatAjax").innerHTML=chaineExercices;
+			}
+			
+			function listeExercices_V2(){
+				request=new asyncRequest();
+				request.open("POST","ajaxListeExercices.php",false);
+				request.send(null);
+				
+				var jsonExercices=JSON.parse(request.responseText);
+				
+				//document.getElementById("resultatAjax").innerHTML="prenom de Damien : "+jsonExercices[1];
+				return jsonExercices;
+			}
+
+
+
+			function toto(){
+				
+				request=new asyncRequest();
+				request.overrideMimeType("application/json");
+				request.open("POST","scriptAjax.php",false);
+				request.send(null);
+				var jsonExercices=JSON.parse(request.responseText);
+				alert(typeof jsonExercices);
+				var chaineExercices='';
+				for(var i=0;i<jsonExercices.length;i++) {
+				 	chaineExercices+=jsonExercices[i].intitule;
+				}
+				document.getElementById("resultatAjax").innerHTML=jsonExercices.length+chaineExercices;
+
+				//ajouté le 15/04/19
+				//request.responseType = 'json';
+				//var jsonExercices=request.response;
+
+				// var chaineExercices='';
+				// for(var i=0;i<jsonExercices.length;i++) {
+				// 	chaineExercices+=jsonExercices[i].intitule;
+				// }
+				// document.getElementById("resultatAjax").innerHTML=jsonExercices.length+chaineExercices;
+			}
+
+
+
+		</script>
+
+	</body>
+
+</html>

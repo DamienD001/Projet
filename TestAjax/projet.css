@@ -1,0 +1,76 @@
+.form-input-time, .form-input-num{
+	border-width:0.5px;
+	border-radius: 2px;
+	
+	text-align:right;
+
+}
+
+.form-input-time{
+	width:20px;
+}
+
+.form-input-num{
+	width:30px;
+}
+
+label{
+	display:inline-block;
+	width:200px;
+}
+
+#formSeance{
+	display:block;
+	width:600px;
+}
+
+
+*{
+
+	border:solid black 1px;
+}
+
+.grille{
+	display:flex;
+	height:500px;
+	width:500px;
+	display:grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.listeExo{
+	grid-column-start: 1;
+	grid-column-end: span 2;
+	grid-row-start: 1;
+	grid-row-end: span 3;
+}
+
+.calories{
+	grid-column-start: 3;
+	grid-column-end: span 2;
+	grid-row-start: 1;
+	/*grid-row-end: 1;*/
+}
+
+.compteTours{
+	grid-column-start: 5;
+	grid-column-end: span 2;
+	grid-row-start: 1;
+	grid-row-end: span 2;
+}
+
+.decompte{
+	grid-column-start: 3;
+	grid-column-end: span 2;
+	grid-row-start: 2;
+	grid-row-end: span 2;
+}
+
+.progression{
+	grid-column-start: 1;
+	grid-column-end: span 6;
+	grid-row-start: 4;
+	grid-row-end: span 2;
+}
+

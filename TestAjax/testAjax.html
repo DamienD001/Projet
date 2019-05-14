@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>Paramètres de séance</title>
+		<meta charset="utf-8">
+	</head>
+
+	<body>
+
+		<div id="resultat"></div>
+
+		<script>
+			function asyncRequest(){
+				try{
+					var request=new XMLHttpRequest();
+					alert("etape 1 OK");
+				}catch(e1){
+					try{
+						request=new ActiveXObject("Msxml2.XMLHTTP");
+						alert("etape 2 OK");
+					}catch(e2){
+						try{
+							request=new ActiveXObject("Microsoft.XMLHTTP");
+							alert("etape 3 OK");
+						}catch(e3){
+							request=false;
+							alert("probleme");
+						}
+					}
+				}
+				return request;
+			}
+			alert("toto");
+			request=new asyncRequest();
+			request.open("POST","scriptAjax.php",false);
+			request.send(null);
+			document.getElementById("resultat").innerHTML=request.responseText;
+
+
+
+		</script>
+
+	</body>
+
+</html>

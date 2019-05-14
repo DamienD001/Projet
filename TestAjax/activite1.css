@@ -1,0 +1,42 @@
+a{
+	
+	margin:10px;
+	padding:10px;
+	display:inline-block;
+	max-width:300px;
+	border-radius:10px;
+}
+
+span{
+	
+	font-size: 2em;
+}
+
+.bouton, span{
+	color:#ffffff;
+	background-color: #3E58AA;
+}
+
+nav ul{
+	display:flex;
+	flex-direction:row;
+}
+
+li{
+	list-style-type:none;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+section{
+	margin-left:40px;
+}
+
+.bouton{
+
+	border-radius:5px;
+	
+
+}
